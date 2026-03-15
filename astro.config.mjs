@@ -4,7 +4,7 @@ import tailwind from '@astrojs/tailwind';
 import react from '@astrojs/react';
 
 export default defineConfig({
-  site: 'https://insightsmith.github.io',
-  base: '/insights-blog',
+  site: 'https://blog.insightsmith.com.au',
+  base: '/',
   integrations: [mdx(), tailwind(), react()],
 });
