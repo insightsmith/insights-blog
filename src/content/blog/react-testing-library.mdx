@@ -1,0 +1,51 @@
+---
+title: "Getting Started with React Testing Library"
+description: "A practical guide to writing user-centric tests for React components using Vitest and React Testing Library."
+pubDate: "2026-03-15"
+tags: ["technology", "react", "testing", "typescript"]
+author: "insightsmith"
+---
+
+import Callout from '../../components/Callout.tsx';
+
+# Getting Started with React Testing Library
+
+Testing React components doesn't have to be painful. React Testing Library (RTL) takes a different approach from older tools like Enzyme — instead of inspecting component internals, it tests the way a **real user interacts** with the UI.
+
+## The Core Principle
+
+RTL's guiding philosophy is:
+
+> *The more your tests resemble the way your software is used, the more confidence they can give you.*
+
+This means you find elements by visible text, ARIA roles, and placeholders — not by class names or component state.
+
+<Callout type="tip">
+  Pair RTL with **Vitest** instead of Jest for Vite-based projects. It's faster and requires zero extra config.
+</Callout>
+
+## A Simple Example
+
+```tsx
+import { render, screen, fireEvent } from '@testing-library/react';
+import { ContactForm } from './ContactForm';
+
+it('submits the form with user input', () => {
+  render(<ContactForm />);
+  fireEvent.change(screen.getByPlaceholderText(/your name/i), {
+    target: { value: 'Alice' },
+  });
+  fireEvent.click(screen.getByRole('button', { name: /send/i }));
+  expect(screen.getByText(/message sent/i)).toBeInTheDocument();
+});
+```
+
+## Key Query Priority
+
+1. `getByRole` — most accessible, mirrors how screen readers work
+2. `getByLabelText` — great for form fields with labels
+3. `getByPlaceholderText` — useful when no label exists
+4. `getByText` — for non-interactive content
+5. `getByTestId` — last resort only
+
+Start with `getByRole` wherever possible and your tests will naturally encourage better accessibility in your components.
