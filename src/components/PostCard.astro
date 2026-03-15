@@ -7,7 +7,7 @@ interface Props {
   slug: string;
 }
 const { title, description, pubDate, tags, slug } = Astro.props;
-const base = import.meta.env.BASE_URL;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const formattedDate = pubDate.toLocaleDateString('en-AU', { year: 'numeric', month: 'long', day: 'numeric' });
 ---
 <article class="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
