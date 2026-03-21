@@ -2,23 +2,17 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import PostCard from '../components/PostCard.astro';
-import TagCloud from '../components/TagCloud.astro';
+import PostsSection from '../components/PostsSection.tsx';
 import { getCollection } from 'astro:content';
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
-const url = Astro.url;
-const selectedTag = url.searchParams.get('tag');
 
 const allTags = posts.flatMap(post => post.data.tags);
 const tagCounts = allTags.reduce((acc, tag) => {
   acc[tag] = (acc[tag] || 0) + 1;
   return acc;
 }, {});
-
-const filteredPosts = selectedTag && selectedTag !== '' ? posts.filter(post => post.data.tags.includes(selectedTag)) : posts;
 ---
 <!doctype html>
 <html lang="en">
@@ -39,19 +33,7 @@ const filteredPosts = selectedTag && selectedTag !== '' ? posts.filter(post => p
         </p>
       </section>
       <section>
-        <TagCloud tagCounts={tagCounts} selectedTag={selectedTag} />
-        <h2 class="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-6">{selectedTag ? `Posts tagged with "${selectedTag}"` : 'Latest Posts'}</h2>
-        <div class="grid gap-6">
-          {filteredPosts.map(post => (
-            <PostCard
-              title={post.data.title}
-              description={post.data.description}
-              pubDate={post.data.pubDate}
-              tags={post.data.tags}
-              slug={post.slug}
-            />
-          ))}
-        </div>
+        <PostsSection posts={posts} tagCounts={tagCounts} client:load />
       </section>
     </main>
     <Footer />
