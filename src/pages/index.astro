@@ -18,7 +18,7 @@ const tagCounts = allTags.reduce((acc, tag) => {
   return acc;
 }, {});
 
-const filteredPosts = selectedTag ? posts.filter(post => post.data.tags.includes(selectedTag)) : posts;
+const filteredPosts = selectedTag && selectedTag !== '' ? posts.filter(post => post.data.tags.includes(selectedTag)) : posts;
 ---
 <!doctype html>
 <html lang="en">
