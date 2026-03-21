@@ -152,6 +152,20 @@ declare module 'astro:content' {
 
 	type ContentEntryMap = {
 		"blog": {
+"oil-shock-iran-war-vs-1970s.mdx": {
+	id: "oil-shock-iran-war-vs-1970s.mdx";
+  slug: "oil-shock-iran-war-vs-1970s";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"power-of-now-eckhart-tolle.mdx": {
+	id: "power-of-now-eckhart-tolle.mdx";
+  slug: "power-of-now-eckhart-tolle";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
 "react-testing-library.mdx": {
 	id: "react-testing-library.mdx";
   slug: "react-testing-library";
@@ -162,6 +176,20 @@ declare module 'astro:content' {
 "stoic-philosophy-modern-life.mdx": {
 	id: "stoic-philosophy-modern-life.mdx";
   slug: "stoic-philosophy-modern-life";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"tensegrity-kurilpa-better-movement.mdx": {
+	id: "tensegrity-kurilpa-better-movement.mdx";
+  slug: "tensegrity-kurilpa-better-movement";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"tolle-on-relationships.mdx": {
+	id: "tolle-on-relationships.mdx";
+  slug: "tolle-on-relationships";
   body: string;
   collection: "blog";
   data: InferEntrySchema<"blog">

@@ -1,0 +1,23 @@
+---
+const { tagCounts, selectedTag } = Astro.props;
+
+const maxCount = Math.max(...Object.values(tagCounts));
+
+const minCount = Math.min(...Object.values(tagCounts));
+
+const fontSize = (count) => 12 + ((count - minCount) / (maxCount - minCount)) * 12;
+---
+
+<div class="mb-6">
+  <h2 class="text-sm font-semibold uppercase tracking-widest text-gray-400 mb-4">Filter by Tags</h2>
+  <div class="flex flex-wrap gap-2">
+    <a href="?tag=" class={`px-3 py-1 rounded ${!selectedTag ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}>
+      All
+    </a>
+    {Object.entries(tagCounts).map(([tag, count]) => (
+      <a href={`?tag=${encodeURIComponent(tag)}`} class={`px-3 py-1 rounded ${selectedTag === tag ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`} style={`font-size: ${fontSize(count)}px`}>
+        {tag} ({count})
+      </a>
+    ))}
+  </div>
+</div>
