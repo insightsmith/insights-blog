@@ -202,6 +202,22 @@ declare module 'astro:content' {
   data: InferEntrySchema<"blog">
 } & { render(): Render[".mdx"] };
 };
+"links": {
+"philosophy-books.mdx": {
+	id: "philosophy-books.mdx";
+  slug: "philosophy-books";
+  body: string;
+  collection: "links";
+  data: InferEntrySchema<"links">
+} & { render(): Render[".mdx"] };
+"tech-tools.mdx": {
+	id: "tech-tools.mdx";
+  slug: "tech-tools";
+  body: string;
+  collection: "links";
+  data: InferEntrySchema<"links">
+} & { render(): Render[".mdx"] };
+};
 
 	};
 

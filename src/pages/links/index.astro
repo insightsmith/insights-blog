@@ -1,0 +1,54 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+const linkCollections = (await getCollection('links', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title="Curated Links"
+      description="Curated collections of useful links on technology, philosophy, fitness, and culture."
+    />
+  </head>
+  <body class="bg-white text-gray-900 font-sans">
+    <Header />
+    <main class="max-w-3xl mx-auto px-6 pb-20">
+      <section class="mb-14">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">Curated Links</h1>
+        <p class="text-lg text-gray-600 leading-relaxed">
+          Carefully selected collections of resources across technology, philosophy, fitness, and culture.
+        </p>
+      </section>
+      <section>
+        <div class="grid gap-8">
+          {linkCollections.map(collection => (
+            <article class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+              <h2 class="text-2xl font-bold text-gray-900 mb-2">
+                <a href={`/links/${collection.slug}`} class="hover:text-blue-600 transition-colors">
+                  {collection.data.title}
+                </a>
+              </h2>
+              <p class="text-gray-600 mb-4">{collection.data.description}</p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                {collection.data.tags.map(tag => (
+                  <span class="px-2 py-1 bg-gray-100 text-gray-700 text-sm rounded">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <p class="text-sm text-gray-500">
+                {collection.data.links.length} links • {collection.data.pubDate.toLocaleDateString()}
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,112 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+const linkCollections = (await getCollection('links', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Flatten all links from all collections
+const allLinks = linkCollections.flatMap(collection =>
+  collection.data.links.map(link => ({
+    ...link,
+    collectionTitle: collection.data.title,
+    collectionSlug: collection.slug,
+    tags: collection.data.tags,
+    pubDate: collection.data.pubDate,
+  }))
+);
+
+// Group links by tags for filtering
+const linksByTag = allLinks.reduce((acc, link) => {
+  link.tags.forEach(tag => {
+    if (!acc[tag]) acc[tag] = [];
+    acc[tag].push(link);
+  });
+  return acc;
+}, {});
+
+const allTags = Object.keys(linksByTag);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title="Links Dashboard"
+      description="Dashboard view of all curated links organized by tags and collections."
+    />
+  </head>
+  <body class="bg-white text-gray-900 font-sans">
+    <Header />
+    <main class="max-w-6xl mx-auto px-6 pb-20">
+      <section class="mb-14">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">Links Dashboard</h1>
+        <p class="text-lg text-gray-600 leading-relaxed">
+          All curated links organized by tags and collections. {allLinks.length} total links from {linkCollections.length} collections.
+        </p>
+      </section>
+
+      <section class="mb-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">By Tags</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {allTags.map(tag => (
+            <div class="border border-gray-200 rounded-lg p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-3 capitalize">{tag}</h3>
+              <div class="space-y-2">
+                {linksByTag[tag].slice(0, 5).map(link => (
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="block text-sm text-blue-600 hover:text-blue-800 hover:underline truncate"
+                    title={link.title}
+                  >
+                    {link.title}
+                  </a>
+                ))}
+                {linksByTag[tag].length > 5 && (
+                  <p class="text-xs text-gray-500">+{linksByTag[tag].length - 5} more</p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">All Links</h2>
+        <div class="grid gap-4">
+          {allLinks.map(link => (
+            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <h3 class="text-lg font-semibold text-gray-900 mb-1">
+                    <a href={link.url} target="_blank" rel="noopener noreferrer" class="hover:text-blue-600 transition-colors">
+                      {link.title}
+                    </a>
+                  </h3>
+                  {link.description && (
+                    <p class="text-gray-600 text-sm mb-2">{link.description}</p>
+                  )}
+                  <div class="flex items-center gap-4 text-xs text-gray-500">
+                    <span>From: <a href={`/links/${link.collectionSlug}`} class="hover:text-blue-600">{link.collectionTitle}</a></span>
+                    <span>{link.pubDate.toLocaleDateString()}</span>
+                  </div>
+                </div>
+                <div class="flex flex-wrap gap-1 ml-4">
+                  {link.tags.map(tag => (
+                    <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,68 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const linkCollections = await getCollection('links', ({ data }) => !data.draft);
+  return linkCollections.map(collection => ({
+    params: { slug: collection.slug },
+    props: { collection },
+  }));
+}
+
+const { collection } = Astro.props;
+const { Content } = await collection.render();
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title={collection.data.title}
+      description={collection.data.description}
+    />
+  </head>
+  <body class="bg-white text-gray-900 font-sans">
+    <Header />
+    <main class="max-w-3xl mx-auto px-6 pb-20">
+      <article class="prose prose-lg max-w-none">
+        <header class="mb-8">
+          <h1 class="text-4xl font-bold text-gray-900 mb-4">{collection.data.title}</h1>
+          <p class="text-xl text-gray-600 mb-4">{collection.data.description}</p>
+          <div class="flex flex-wrap gap-2 mb-4">
+            {collection.data.tags.map(tag => (
+              <span class="px-2 py-1 bg-gray-100 text-gray-700 text-sm rounded">
+                {tag}
+              </span>
+            ))}
+          </div>
+          <p class="text-sm text-gray-500">
+            {collection.data.pubDate.toLocaleDateString()}
+          </p>
+        </header>
+
+        <Content />
+
+        <section class="mt-8">
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">Links</h2>
+          <div class="space-y-4">
+            {collection.data.links.map(link => (
+              <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                <h3 class="text-lg font-semibold text-gray-900 mb-1">
+                  <a href={link.url} target="_blank" rel="noopener noreferrer" class="hover:text-blue-600 transition-colors">
+                    {link.title}
+                  </a>
+                </h3>
+                {link.description && (
+                  <p class="text-gray-600 text-sm">{link.description}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      </article>
+    </main>
+    <Footer />
+  </body>
+</html>
