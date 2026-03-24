@@ -51,15 +51,35 @@ const OilPriceChart: React.FC = () => {
 
       const json = (await response.json()) as any;
 
-      if (!json || !Array.isArray(json.data) || json.data.length === 0) {
-        throw new Error('Missing or invalid data from oil price API');
+      if (json?.Note || json?.Information || json?.['Error Message']) {
+        const message = json.Note || json.Information || json['Error Message'];
+        throw new Error(message);
       }
 
-      const raw = json.data;
-      const sorted: OilPoint[] = raw
-        .map((item: any) => ({ date: item.date, value: Number(item.value) }))
-        .filter(item => !!item.date && Number.isFinite(item.value))
+      const maybeData = Array.isArray(json?.data) ? json.data : null;
+      let rawPoints: OilPoint[] = [];
+
+      if (maybeData && maybeData.length > 0) {
+        rawPoints = maybeData
+          .map((item: any) => ({ date: item.date, value: Number(item.value) }))
+          .filter(item => !!item.date && Number.isFinite(item.value));
+      } else if (json && typeof json === 'object') {
+        // Support other time series formats (e.g., Alpha Vantage generic time series fields)
+        const candidateKey = Object.keys(json).find(k => /time series/i.test(k) || /series/i.test(k));
+        if (candidateKey && json[candidateKey] && typeof json[candidateKey] === 'object') {
+          rawPoints = Object.entries(json[candidateKey]).map(([date, value]: [string, any]) => {
+            let v = parseFloat(value?.['4. close'] ?? value?.close ?? value?.value ?? value);
+            return { date, value: Number(v) };
+          }).filter(item => !!item.date && Number.isFinite(item.value));
+        }
+      }
+
+      const sorted: OilPoint[] = rawPoints
         .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+      if (sorted.length === 0) {
+        throw new Error('Missing or invalid data from oil price API');
+      }
 
       if (sorted.length === 0) {
         throw new Error('No valid price points found');
