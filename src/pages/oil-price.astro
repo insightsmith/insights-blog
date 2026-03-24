@@ -1,0 +1,31 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import OilPriceChart from '../components/OilPriceChart';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead
+      title="Oil Price Dashboard"
+      description="Current WTI crude oil price graph and trend."
+    />
+  </head>
+  <body class="bg-white text-gray-900 font-sans">
+    <Header />
+    <main class="max-w-6xl mx-auto px-6 pb-20">
+      <section class="mb-8">
+        <h1 class="text-4xl font-bold text-gray-900 mb-3">Oil Price Dashboard</h1>
+        <p class="text-lg text-gray-600 leading-relaxed">Current WTI crude oil price and recent historical line chart (Alpha Vantage demo API).</p>
+      </section>
+
+      <section>
+        <div class="mb-6">
+          <OilPriceChart client:load />
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </body>
+</html>
