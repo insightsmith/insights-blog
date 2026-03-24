@@ -83,10 +83,6 @@ const OilPriceChart: React.FC = () => {
         throw new Error('Missing or invalid data from oil price API');
       }
 
-      if (sorted.length === 0) {
-        throw new Error('No valid price points found');
-      }
-
       const last = sorted[sorted.length - 1];
       setPoints(sorted.slice(-14));
       setLatest(last);
@@ -147,15 +143,17 @@ const OilPriceChart: React.FC = () => {
             </defs>
             <rect x={0} y={0} width={width} height={height} fill="#f8fafc" rx={12} />
             <path d={path} fill="none" stroke="url(#lineGradient)" strokeWidth={3} strokeLinecap="round" />
-            {points.map((point, i) => {
-              const x = 16 + (i * (width - 32)) / Math.max(points.length - 1, 1);
+            {(() => {
               const min = Math.min(...points.map(p => p.value));
               const max = Math.max(...points.map(p => p.value));
-              const y = 16 + (height - 32) - ((point.value - min) / (Math.max(max - min, 1))) * (height - 32);
-              return (
-                <circle key={point.date} cx={x} cy={y} r={3.5} fill="#0284c7" />
-              );
-            })}
+              return points.map((point, i) => {
+                const x = 16 + (i * (width - 32)) / Math.max(points.length - 1, 1);
+                const y = 16 + (height - 32) - ((point.value - min) / (Math.max(max - min, 1))) * (height - 32);
+                return (
+                  <circle key={point.date} cx={x} cy={y} r={3.5} fill="#0284c7" />
+                );
+              });
+            })()}
             <text x={12} y={20} fontSize={12} fill="#475569">{points[0].date}</text>
             <text x={width - 80} y={20} fontSize={12} fill="#475569">{points[points.length - 1].date}</text>
           </svg>
