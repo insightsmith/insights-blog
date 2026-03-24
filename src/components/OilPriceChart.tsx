@@ -5,7 +5,9 @@ type OilPoint = {
   value: number;
 };
 
-const API_ENDPOINT = 'https://www.alphavantage.co/query?function=WTI&interval=daily&apikey=demo';
+const API_KEY = import.meta.env.PUBLIC_ALPHA_VANTAGE_KEY || 'demo';
+const API_ENDPOINT = `https://www.alphavantage.co/query?function=WTI&interval=daily&apikey=${API_KEY}`;
+
 
 const formatCurrency = (value: number) => {
   return `$${value.toFixed(2)}`;
@@ -113,7 +115,7 @@ const OilPriceChart: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-5">
         <div>
           <h1 className="text-xl font-bold text-gray-900">Current WTI Crude Oil Price</h1>
-          <p className="text-sm text-gray-600">Fetched from Alpha Vantage (demo key)</p>
+          <p className="text-sm text-gray-600">Fetched from Alpha Vantage</p>
           {latest && (
             <p className="text-3xl font-semibold text-green-600 mt-2">{formatCurrency(latest.value)}</p>
           )}
