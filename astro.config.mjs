@@ -7,7 +7,7 @@ import netlify from '@astrojs/netlify';
 export default defineConfig({
   site: 'https://blog.insightsforge.com.au',
   base: '/',
-  output: 'hybrid',
+  output: 'static',
   adapter: netlify(),
   integrations: [mdx(), tailwind(), react()],
 });
