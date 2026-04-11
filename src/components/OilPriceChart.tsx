@@ -5,7 +5,9 @@ type OilPoint = {
   value: number;
 };
 
-const API_ENDPOINT = '/api/oil-price';
+const API_KEY = import.meta.env.PUBLIC_ALPHA_VANTAGE_KEY || 'demo';
+const API_ENDPOINT = `https://www.alphavantage.co/query?function=WTI&interval=daily&apikey=${API_KEY}`;
+
 
 const formatCurrency = (value: number) => {
   return `$${value.toFixed(2)}`;
@@ -51,10 +53,6 @@ const OilPriceChart: React.FC = () => {
 
       const json = (await response.json()) as any;
 
-      if (json?.error) {
-        throw new Error(json.error);
-      }
-
       if (json?.Note || json?.Information || json?.['Error Message']) {
         const message = json.Note || json.Information || json['Error Message'];
         throw new Error(message);
@@ -68,6 +66,7 @@ const OilPriceChart: React.FC = () => {
           .map((item: any) => ({ date: item.date, value: Number(item.value) }))
           .filter(item => !!item.date && Number.isFinite(item.value));
       } else if (json && typeof json === 'object') {
+        // Support other time series formats (e.g., Alpha Vantage generic time series fields)
         const candidateKey = Object.keys(json).find(k => /time series/i.test(k) || /series/i.test(k));
         if (candidateKey && json[candidateKey] && typeof json[candidateKey] === 'object') {
           rawPoints = Object.entries(json[candidateKey]).map(([date, value]: [string, any]) => {
